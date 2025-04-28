@@ -40,3 +40,10 @@ a {
     color-scheme: dark;
   }
 }
+
+.section {
+  max-width: 1440px;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
