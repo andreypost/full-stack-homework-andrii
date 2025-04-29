@@ -1,14 +1,13 @@
-import { AppBar, Button, Toolbar, Typography } from "@mui/material";
-import Link from "next/link";
 import { memo } from "react";
+import { Container, Typography } from "@mui/material";
 
 const Grades = memo(() => {
   return (
-    <div className="section">
+    <Container maxWidth="lg">
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
         Grades Page
       </Typography>
-    </div>
+    </Container>
   );
 });
 export default Grades;
