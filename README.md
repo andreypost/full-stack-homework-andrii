@@ -20,6 +20,13 @@ You will build a web application that demonstrates your proficiency in:
 
 ```bash
 docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+
+## If you already have a local PostgreSQL server (installed on your machine) and it runs on localhost:5432
+docker run --name homework-db -e POSTGRES_PASSWORD=postgres -p 5433:5432 -d postgres
+
+## Connect to PostgreSQL database shell inside the container
+docker exec -it homework-db psql -U postgres
+
 ```
 
 - Choose and implement a database connection method:
@@ -64,8 +71,8 @@ Table name: "numbers"
 Features:
 
 1. Display a table showing pairs of adjacent numbers with their sums
-3. Auto-refresh table when new numbers are added
-4. Implement proper error handling for database operations
+2. Auto-refresh table when new numbers are added
+3. Implement proper error handling for database operations
 
 Example table format showing adjacent pairs and their sums:
 
@@ -96,7 +103,8 @@ Columns:
 Implementation Requirements:
 
 1. Create a data table displaying:
-    - ID
+
+   - ID
    - Class name
    - Grade
 

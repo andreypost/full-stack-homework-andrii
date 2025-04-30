@@ -28,7 +28,8 @@ export const NumbersForm = memo(() => {
       if (!response.ok) {
         throw new Error("Submission failed");
       }
-      console.log("response: ", response);
+      const r = response.json()
+      r.then(t => console.log(t))
     } catch (error: any) {
       console.error(error);
       setError(error);
