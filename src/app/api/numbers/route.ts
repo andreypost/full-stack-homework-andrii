@@ -1,21 +1,11 @@
-// import { connectToDatabase } from "@/lib/connection";
-import { NumberEntity } from "@/entities/NumberEntity";
-import { msg } from "@/constants/messages";
-
-await initSchema();
-
-// Route Handlers
-
-interface NumbersResponse {
-  id: number;
-  value: number;
-}
-
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
-import { initSchema } from "@/lib/initSchema";
+import { initNumbersTable } from "@/lib/initSchema";
+import { msg } from "@/constants/messages";
 
-export async function POST(req: Request) {
+await initNumbersTable();
+
+export const POST = async (req: Request) => {
   try {
     const body = await req.json();
 
@@ -27,14 +17,10 @@ export async function POST(req: Request) {
       throw new Error("Validation failed!");
     }
 
-    const client = await pool.connect();
-
-    const result = await client.query(
+    const result = await pool.query(
       "INSERT INTO numbers (value) VALUES ($1) RETURNING id, value;",
       [numberValue]
     );
-
-    client.release();
 
     return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
@@ -44,4 +30,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+};
