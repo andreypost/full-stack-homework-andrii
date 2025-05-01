@@ -9,12 +9,20 @@ export const POST = async (req: Request) => {
   try {
     const body = await req.json();
 
-    let { numberValue } = body;
+    if (typeof body !== "object" || !("numberValue" in body)) {
+      return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
+    }
 
-    numberValue = Number(numberValue);
+    let { numberValue } = body;
+    // for (let i = 0; i < 100_000_000; i++) { // simulate hard calc
+    numberValue = parseFloat(numberValue); // insdeaf of Number(""), it treats "" as 0
+    // }
 
     if (!Number.isFinite(numberValue)) {
-      throw new Error("Validation failed!");
+      return NextResponse.json(
+        { message: "Number validation failed!" },
+        { status: 400 }
+      );
     }
 
     const result = await pool.query(
@@ -24,7 +32,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
-    console.error("error:", error);
+    console.error("error:", error); // avoid printing sensetive info in production
     return NextResponse.json(
       { message: msg.FAILD_TO_LOAD_DATA },
       { status: 500 }
