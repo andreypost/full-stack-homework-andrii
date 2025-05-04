@@ -12,38 +12,46 @@ export const NumbersForm = memo(() => {
   const handleSetNumberValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     console.log("value:", value);
+    setError("");
     setNumberValue(value);
     setSuccess(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const parsed = parseFloat(numberValue);
+
+    if (!Number.isInteger(parsed)) {
+      setError("Only whole numbers allowed");
+      return;
+    }
     setLoading(true);
     setSuccess(false);
     setError("");
 
-    await fetch("/api/numbers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ numberValue }),
-    })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message);
-        return data;
-      })
-      .then((data) => {
-        console.log("data: ", data);
-        setSuccess(true);
-        setNumberValue("");
-      })
-      .catch((error) => {
-        console.error(error);
-        setError(error.message);
-      })
-      .finally(() => setLoading(false));
+    try {
+      const response = await fetch("/api/numbers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ numberValue }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message);
+
+      console.log("data: ", data);
+      setSuccess(true);
+      setNumberValue("");
+    } catch (error: any) {
+      console.error(error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,7 +69,7 @@ export const NumbersForm = memo(() => {
             value={numberValue}
             onChange={handleSetNumberValue}
             // error={!!error}
-            helperText={error || ""}
+            // helperText={error || ""}
             required
           />
           <Button type="submit" variant="contained" color="primary">
@@ -70,6 +78,7 @@ export const NumbersForm = memo(() => {
           {success && <span style={{ color: "green" }}>✓ Saved</span>}
         </>
       </Box>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </>
   );
 });

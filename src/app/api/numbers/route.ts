@@ -14,11 +14,12 @@ export const POST = async (req: Request) => {
     }
 
     let { numberValue } = body;
-    // for (let i = 0; i < 100_000_000; i++) { // simulate hard calc
+    // for (let i = 0; i < 100_000_000; i++) {
+    // simulate hard calc
     numberValue = parseFloat(numberValue); // insdeaf of Number(""), it treats "" as 0
     // }
 
-    if (!Number.isFinite(numberValue)) {
+    if (!Number.isInteger(numberValue)) {
       return NextResponse.json(
         { message: "Number validation failed!" },
         { status: 400 }
