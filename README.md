@@ -21,8 +21,8 @@ You will build a web application that demonstrates your proficiency in:
 ```bash
 docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 
-## If you already have a local PostgreSQL server (installed on your machine) and it runs on localhost:5432
-docker run --name homework-db -e POSTGRES_PASSWORD=postgres -p 5433:5432 -d postgres
+## If you already use any localhost port
+docker run --name homework-db -e POSTGRES_PASSWORD=postgres -p 5434:5432 -d postgres
 
 ## Connect to PostgreSQL database shell inside the container
 docker exec -it homework-db psql -U postgres
