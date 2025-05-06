@@ -1,15 +1,15 @@
 "use client";
 import React, { memo, useState } from "react";
 import { Box, TextField, Button } from "@mui/material";
-import { Spinner } from "@/components/Spinner";
 import { useNumbersStore } from "@/store/numbers-store";
+import { useSpinnerStore } from "@/store/spinner-store";
 
 export const NumbersForm = memo(() => {
   const [numberValue, setNumberValue] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const { fetchPairs } = useNumbersStore();
+  const { setSpinnerState } = useSpinnerStore();
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const { fetchPairs } = useNumbersStore();
 
   const handleSetNumberValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -27,7 +27,7 @@ export const NumbersForm = memo(() => {
       setError("Only whole numbers allowed");
       return;
     }
-    setLoading(true);
+    setSpinnerState(true);
     setSuccess(false);
     setError("");
 
@@ -51,13 +51,12 @@ export const NumbersForm = memo(() => {
       console.error(error);
       setError(error.message);
     } finally {
-      setLoading(false);
+      setSpinnerState(false);
     }
   };
 
   return (
     <>
-      {loading && <Spinner />}
       <Box
         component="form"
         onSubmit={handleSubmit}

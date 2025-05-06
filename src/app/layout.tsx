@@ -4,6 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { theme } from "@/common/theme";
+import { SpinnerOverlay } from "@/components/SpinnerOverlay";
 import { Navbar } from "@/components/Navbar";
 
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
+            <SpinnerOverlay />
             <Navbar />
             {children}
           </ThemeProvider>
