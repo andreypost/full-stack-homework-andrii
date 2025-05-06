@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Container, Typography } from "@mui/material";
-import { NumbersForm } from "@/components/NumbersForm";
+import { NumbersForm } from "./NumbersForm";
+import { NumbersTable } from "./NumbersTable";
 
 const Numbers = memo(() => {
   return (
@@ -9,6 +10,7 @@ const Numbers = memo(() => {
         Numbers Page
       </Typography>
       <NumbersForm />
+      <NumbersTable />
     </Container>
   );
 });
