@@ -56,11 +56,11 @@ export const NumbersForm = memo(() => {
   };
 
   return (
-    <>
+    <div style={{ paddingBottom: "30px" }}>
       <Box
         component="form"
         onSubmit={handleSubmit}
-        sx={{ display: "flex", gap: 2, alignItems: "center" }}
+        sx={{ display: "flex", gap: 2, alignItems: "center", mb: 1 }}
       >
         <>
           <TextField
@@ -68,8 +68,6 @@ export const NumbersForm = memo(() => {
             type="number"
             value={numberValue}
             onChange={handleSetNumberValue}
-            // error={!!error}
-            // helperText={error || ""}
             required
           />
           <Button type="submit" variant="contained" color="primary">
@@ -78,7 +76,7 @@ export const NumbersForm = memo(() => {
           {success && <span style={{ color: "green" }}>✓ Saved</span>}
         </>
       </Box>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </>
+      {error && <p style={{ position: "absolute", color: "red" }}>{error}</p>}
+    </div>
   );
 });

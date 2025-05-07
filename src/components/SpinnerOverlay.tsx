@@ -1,12 +1,10 @@
 "use client";
-import { useSpinnerStore } from "@/store/spinner-store";
+// import { useSpinnerStore } from "@/store/spinner-store";
 import { CircularProgress, Box } from "@mui/material";
 
 export const SpinnerOverlay = () => {
-  const { isLoading } = useSpinnerStore();
-
-  if (!isLoading) return null;
-
+  // const { isLoading } = useSpinnerStore();
+  // if (!isLoading) return null;
   return (
     <Box
       sx={{
@@ -26,3 +24,18 @@ export const SpinnerOverlay = () => {
     </Box>
   );
 };
+
+export const Spinner = () => (
+  <div className="spin">
+    <section>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </section>
+  </div>
+);

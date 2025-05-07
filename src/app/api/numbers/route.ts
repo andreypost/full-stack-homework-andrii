@@ -33,7 +33,6 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
-    console.error("error:", error); // avoid printing sensetive info in production
     return NextResponse.json(
       { message: msg.FAILD_TO_LOAD_DATA },
       { status: 500 }
