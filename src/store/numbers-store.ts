@@ -1,12 +1,15 @@
 import { create } from "zustand";
-import { AdjacentPair, NumbersPair } from "@/interfaces/NumberTypes";
+import { AdjacentPair, NumbersPair } from "@/interfaces/NumbersTypes";
 
 export type NumbersStore = {
   numbers: NumbersPair[];
   pairs: AdjacentPair[];
   addNewNumber: (n: NumbersPair) => void;
   setPairs: (pairs: AdjacentPair[]) => void;
-  fetchPairs: () => Promise<void>;
+  fetchPairs: (
+    currentPairPage?: number,
+    currentRowsPerPage?: number
+  ) => Promise<void>;
 };
 
 export const useNumbersStore = create<NumbersStore>((set) => ({
@@ -17,9 +20,13 @@ export const useNumbersStore = create<NumbersStore>((set) => ({
       numbers: [...state.numbers, n],
     })),
   setPairs: (pairs: AdjacentPair[]) => set({ pairs }),
-  fetchPairs: async () => {
+  fetchPairs: async (currentPairPage = 0, currentRowsPerPage = 5) => {
     try {
-      const res = await fetch("/api/numbers");
+      const params = new URLSearchParams({
+        page: currentPairPage.toString(),
+        rowsPerPage: currentRowsPerPage.toString(),
+      });
+      const res = await fetch(`/api/numbers?${params}`);
       const data = await res.json();
       set({ pairs: data });
     } catch (err) {

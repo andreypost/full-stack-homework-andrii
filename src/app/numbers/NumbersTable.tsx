@@ -1,4 +1,5 @@
 "use client";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SpinnerOverlay } from "@/components/SpinnerOverlay";
 import { useNumbersStore } from "@/store/numbers-store";
 import {
@@ -11,29 +12,60 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
+import { PaginatedPairNumbers } from "./page";
 
 export const NumbersTable = memo(() => {
+  const { pairPage, setPairPage, rowsPerPage, setRowsPerPage } =
+    useContext(PaginatedPairNumbers);
   const { pairs, fetchPairs } = useNumbersStore();
   const [isLoading, setSpinnerState] = useState(true);
-  const [tablePage, setTablePage] = useState(0);
-  const [tableRowPerPage, setTableRowPerPage] = useState(5);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
+    const currentPairPage = parseInt(searchParams.get("page") || "0", 10);
+    const currentRowsPerPage = parseInt(
+      searchParams.get("rowsPerPage") || "5",
+      10
+    );
+    setPairPage(currentPairPage);
+    setRowsPerPage(currentRowsPerPage);
     const getPairs = async () => {
       // requestAnimationFrame(async () => {
       // await new Promise((res) => setTimeout((r) => res(r), 0));
-      await fetchPairs();
+      await fetchPairs(currentPairPage, currentRowsPerPage);
       setSpinnerState(false);
       // });
     };
     getPairs();
   }, []);
 
-  const paginated = pairs.slice(
-    tablePage * tableRowPerPage,
-    tablePage * tableRowPerPage + tableRowPerPage
-  );
+  const handleChangePage = (event: unknown, newPage: number) => {
+    params.set("page", newPage.toString());
+    router.push(`/numbers?${params}`);
+    setPairPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newRows = parseInt(event.target.value, 10);
+    params.set("page", "0");
+    params.set("rowsPerPage", newRows.toString());
+    router.push(`/numbers?${params}`);
+    setPairPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
+
+  const paginated =
+    (pairs?.length > 0 &&
+      pairs.slice(
+        pairPage * rowsPerPage,
+        pairPage * rowsPerPage + rowsPerPage
+      )) ||
+    [];
 
   if (isLoading) return <SpinnerOverlay />;
 
@@ -65,13 +97,10 @@ export const NumbersTable = memo(() => {
       <TablePagination
         component="div"
         count={pairs.length}
-        page={tablePage}
-        onPageChange={(e, newPage) => setTablePage(newPage)}
-        rowsPerPage={tableRowPerPage}
-        onRowsPerPageChange={(e) => {
-          setTableRowPerPage(parseInt(e.target.value, 10));
-          setTablePage(0);
-        }}
+        page={pairPage}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />
     </TableContainer>
