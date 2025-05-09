@@ -1,13 +1,15 @@
 "use client";
-import React, { memo, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { useNumbersStore } from "@/store/numbers-store";
 import { useSpinnerStore } from "@/store/spinner-store";
+import { PaginatedPairNumbers } from "./page";
 
 export const NumbersForm = memo(() => {
   const [numberValue, setNumberValue] = useState<string>("");
   const { fetchPairs } = useNumbersStore();
   const { setSpinnerState } = useSpinnerStore();
+  const { pairPage, rowsPerPage } = useContext(PaginatedPairNumbers);
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +17,6 @@ export const NumbersForm = memo(() => {
     const { value } = e.target;
     setError("");
     setNumberValue(value);
-    setSuccess(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,7 +29,6 @@ export const NumbersForm = memo(() => {
       return;
     }
     setSpinnerState(true);
-    setSuccess(false);
     setError("");
 
     try {
@@ -44,9 +44,11 @@ export const NumbersForm = memo(() => {
 
       if (!response.ok) throw new Error(data.message);
 
-      await fetchPairs();
+      await fetchPairs(pairPage, rowsPerPage);
+
       setSuccess(true);
       setNumberValue("");
+      setTimeout(() => setSuccess(false), 1000);
     } catch (error: any) {
       console.error(error);
       setError(error.message);
@@ -73,7 +75,15 @@ export const NumbersForm = memo(() => {
           <Button type="submit" variant="contained" color="primary">
             Submit
           </Button>
-          {success && <span style={{ color: "green" }}>✓ Saved</span>}
+          <span
+            style={{
+              opacity: success ? "1" : "0",
+              color: "green",
+              transition: "opacity 1s",
+            }}
+          >
+            ✓ Saved
+          </span>
         </>
       </Box>
       {error && <p style={{ position: "absolute", color: "red" }}>{error}</p>}

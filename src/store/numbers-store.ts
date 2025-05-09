@@ -4,6 +4,7 @@ import { AdjacentPair, NumbersPair } from "@/interfaces/NumbersTypes";
 export type NumbersStore = {
   numbers: NumbersPair[];
   pairs: AdjacentPair[];
+  totalCount: number;
   addNewNumber: (n: NumbersPair) => void;
   setPairs: (pairs: AdjacentPair[]) => void;
   fetchPairs: (
@@ -15,6 +16,7 @@ export type NumbersStore = {
 export const useNumbersStore = create<NumbersStore>((set) => ({
   numbers: [],
   pairs: [],
+  totalCount: 0,
   addNewNumber: (n) =>
     set((state) => ({
       numbers: [...state.numbers, n],
@@ -27,8 +29,10 @@ export const useNumbersStore = create<NumbersStore>((set) => ({
         rowsPerPage: currentRowsPerPage.toString(),
       });
       const res = await fetch(`/api/numbers?${params}`);
-      const data = await res.json();
+      const [data, totalCount] = await res.json();
+
       set({ pairs: data });
+      set({ totalCount });
     } catch (err) {
       console.error("Failed to fetch adjacent pairs", err);
     }
