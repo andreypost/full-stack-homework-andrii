@@ -21,7 +21,7 @@ const Numbers = memo(() => {
           setRowsPerPage,
         }}
       >
-        <Typography maxWidth="lg" variant="h6" sx={{ flexGrow: 1 }}>
+        <Typography maxWidth="lg" variant="h6" sx={{ flexGrow: 1, mb: 2 }}>
           Numbers Page
         </Typography>
         <NumbersForm />

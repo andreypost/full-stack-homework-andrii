@@ -10,26 +10,25 @@ export const NumbersForm = memo(() => {
   const { fetchPairs } = useNumbersStore();
   const { setSpinnerState } = useSpinnerStore();
   const { pairPage, rowsPerPage } = useContext(PaginatedPairNumbers);
-  const [success, setSuccess] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const [numberSuccess, setNumberSuccess] = useState<string>("");
+  const [numberError, setNumberError] = useState<string | null>(null);
 
   const handleSetNumberValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setError("");
-    setNumberValue(value);
+    setNumberError("");
+    setNumberValue(e.target.value as string);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleNumberSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const parsed = parseFloat(numberValue);
 
     if (!Number.isInteger(parsed) || parsed === 0) {
-      setError("Only whole numbers allowed");
+      setNumberError("Only whole numbers allowed");
       return;
     }
     setSpinnerState(true);
-    setError("");
+    setNumberError("");
 
     try {
       const response = await fetch("/api/numbers", {
@@ -46,12 +45,12 @@ export const NumbersForm = memo(() => {
 
       await fetchPairs(pairPage, rowsPerPage);
 
-      setSuccess(data.message);
+      setNumberSuccess(data.message);
       setNumberValue("");
-      setTimeout(() => setSuccess(""), 1000);
+      setTimeout(() => setNumberSuccess(""), 2000);
     } catch (error: any) {
       console.error(error);
-      setError(error.message);
+      setNumberError(error.message);
     } finally {
       setSpinnerState(false);
     }
@@ -61,32 +60,39 @@ export const NumbersForm = memo(() => {
     <div style={{ paddingBottom: "30px" }}>
       <Box
         component="form"
-        onSubmit={handleSubmit}
-        sx={{ display: "flex", gap: 2, alignItems: "center", mb: 1 }}
+        onSubmit={handleNumberSubmit}
+        sx={{ display: "flex", gap: 2, mb: 1 }}
       >
-        <>
-          <TextField
-            label="Enter number"
-            type="number"
-            value={numberValue}
-            onChange={handleSetNumberValue}
-            required
-          />
-          <Button type="submit" variant="contained" color="primary">
-            Submit
-          </Button>
-          <span
-            style={{
-              opacity: success ? "1" : "0",
-              color: "green",
-              transition: "opacity 1s",
-            }}
-          >
-            ✓ {success}
-          </span>
-        </>
+        <TextField
+          sx={{ width: "100%", maxWidth: "220px" }}
+          type="number"
+          value={numberValue}
+          label="Enter number"
+          onChange={handleSetNumberValue}
+        />
+
+        <Button
+          sx={{ width: "100%", maxWidth: "220px" }}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
+          Submit
+        </Button>
+        <span
+          style={{
+            margin: "auto 0",
+            opacity: numberSuccess ? "1" : "0",
+            color: "green",
+            transition: "opacity 1s",
+          }}
+        >
+          ✓ {numberSuccess}
+        </span>
       </Box>
-      {error && <p style={{ position: "absolute", color: "red" }}>{error}</p>}
+      {numberError && (
+        <p style={{ position: "absolute", color: "red" }}>{numberError}</p>
+      )}
     </div>
   );
 });

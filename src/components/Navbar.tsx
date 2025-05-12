@@ -1,6 +1,6 @@
-import { AppBar, Button, Toolbar, Container, Typography } from "@mui/material";
-import Link from "next/link";
 import { memo } from "react";
+import Link from "next/link";
+import { AppBar, Button, Toolbar, Container, Typography } from "@mui/material";
 
 export const Navbar = memo(() => {
   return (
@@ -15,11 +15,11 @@ export const Navbar = memo(() => {
           >
             Full Stack Homework
           </Typography>
-          <Button color="inherit" component={Link} href="/grades">
-            Grades
-          </Button>
           <Button color="inherit" component={Link} href="/numbers">
             Numbers
+          </Button>
+          <Button color="inherit" component={Link} href="/grades">
+            Grades
           </Button>
         </Toolbar>
       </Container>

@@ -36,7 +36,7 @@ export const POST = async (req: Request) => {
       { message: "Number saved successfully!" },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
       { message: msg.FAILD_TO_LOAD_DATA },
       { status: 500 }

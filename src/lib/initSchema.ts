@@ -3,8 +3,6 @@ import { pool } from "./db";
 let numbersInitialized = false,
   gradesInitialized = false;
 
-// ALTER TABLE numbers ALTER COLUMN value TYPE BIGINT;
-
 export const initNumbersTable = async () => {
   if (numbersInitialized) return;
   try {

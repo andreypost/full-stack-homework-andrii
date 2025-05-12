@@ -11,7 +11,7 @@ export const getPaginatedNumberPairs = async (
         n1.value AS number1,
         n2.id AS id2,
         n2.value AS number2,
-        (n1.value + n2.value)::BIGINT AS sum
+        n1.value + n2.value AS sum
     FROM numbers n1
     JOIN numbers n2 ON n2.id = n1.id + 1
     ORDER BY n1.id
