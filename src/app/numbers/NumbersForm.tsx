@@ -10,7 +10,7 @@ export const NumbersForm = memo(() => {
   const { fetchPairs } = useNumbersStore();
   const { setSpinnerState } = useSpinnerStore();
   const { pairPage, rowsPerPage } = useContext(PaginatedPairNumbers);
-  const [success, setSuccess] = useState<boolean>(false);
+  const [success, setSuccess] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const handleSetNumberValue = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,9 +46,9 @@ export const NumbersForm = memo(() => {
 
       await fetchPairs(pairPage, rowsPerPage);
 
-      setSuccess(true);
+      setSuccess(data.message);
       setNumberValue("");
-      setTimeout(() => setSuccess(false), 1000);
+      setTimeout(() => setSuccess(""), 1000);
     } catch (error: any) {
       console.error(error);
       setError(error.message);
@@ -82,7 +82,7 @@ export const NumbersForm = memo(() => {
               transition: "opacity 1s",
             }}
           >
-            ✓ Saved
+            ✓ {success}
           </span>
         </>
       </Box>

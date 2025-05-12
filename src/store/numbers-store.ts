@@ -29,10 +29,11 @@ export const useNumbersStore = create<NumbersStore>((set) => ({
         rowsPerPage: currentRowsPerPage.toString(),
       });
       const res = await fetch(`/api/numbers?${params}`);
-      const [data, totalCount] = await res.json();
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
 
-      set({ pairs: data });
-      set({ totalCount });
+      const { data = [], totalCount = 0 } = await res.json();
+
+      set({ pairs: data, totalCount });
     } catch (err) {
       console.error("Failed to fetch adjacent pairs", err);
     }

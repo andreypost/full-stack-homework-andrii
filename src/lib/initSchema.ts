@@ -3,13 +3,15 @@ import { pool } from "./db";
 let numbersInitialized = false,
   gradesInitialized = false;
 
+// ALTER TABLE numbers ALTER COLUMN value TYPE BIGINT;
+
 export const initNumbersTable = async () => {
   if (numbersInitialized) return;
   try {
     await pool.query(
       `CREATE TABLE IF NOT EXISTS numbers (
         id SERIAL PRIMARY KEY,
-        value INTEGER NOT NULL
+        value BIGINT NOT NULL
       );`
     );
     console.log("Tables 'numbers' initialized!");
@@ -26,7 +28,7 @@ export const initGradesTable = async () => {
       `CREATE TABLE IF NOT EXISTS grades (
         id SERIAL PRIMARY KEY,
         class TEXT NOT NULL,
-        grade INTEGER NOT NULL
+        grade BIGINT NOT NULL
       );`
     );
     console.log("Table 'grades' initialized!");
