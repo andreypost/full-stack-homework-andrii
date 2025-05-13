@@ -11,27 +11,30 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { useSpinnerStore } from "@/store/spinner-store";
+import { useNumericInput } from "@/hooks/useNumericInput";
+import { onKeyDownCheck } from "@/helpers/utils";
 
 export const GradesForm = memo(() => {
   const [classValue, setClassValue] = useState<string>("");
-  const [gradeValue, setGradeValue] = useState<string>("");
   const [classError, setClassError] = useState<string>("");
-  const [gradeError, setGradeError] = useState<string>("");
   const { setSpinnerState } = useSpinnerStore();
   const [classGradeSuccess, setClassGradeSuccess] = useState("");
+  const {
+    value: gradeValue,
+    setValue: setGradeValue,
+    error: gradeError,
+    setError: setGradeError,
+    handleChange: handleChangeGradeValue,
+  } = useNumericInput({ min: 0, max: 100, rejectZero: false });
 
   const handleClassChange = (e: SelectChangeEvent) => {
     setClassError("");
-    setClassValue(e.target.value as string);
-  };
-
-  const handleGradeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGradeError("");
-    setGradeValue(e.target.value as string);
+    setClassValue(e.target.value);
   };
 
   const handleGradeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!classValue) {
       setClassError("Class name is required!");
       return;
@@ -50,7 +53,9 @@ export const GradesForm = memo(() => {
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
+
       console.log("data: ", data);
+
       setClassGradeSuccess(data.message);
       setClassValue("");
       setGradeValue("");
@@ -74,7 +79,9 @@ export const GradesForm = memo(() => {
           mb: 1,
         }}
       >
-        <FormControl sx={{ width: "100%", maxWidth: "220px" }}>
+        <FormControl
+          sx={{ width: "100%", maxWidth: "240px", position: "relative" }}
+        >
           <InputLabel id="class-label">Class name:</InputLabel>
           <Select
             labelId="class-label"
@@ -89,23 +96,45 @@ export const GradesForm = memo(() => {
             <MenuItem value="History">History</MenuItem>
           </Select>
           {classError && (
-            <p style={{ paddingTop: "10px", color: "red" }}>{classError}</p>
+            <p
+              style={{
+                position: "absolute",
+                bottom: "-20px",
+                fontSize: "12px",
+                color: "red",
+              }}
+            >
+              {classError}
+            </p>
           )}
         </FormControl>
-        <Box component="div" sx={{ width: "100%", maxWidth: "220px" }}>
+        <Box
+          component="div"
+          sx={{ width: "100%", maxWidth: "240px", position: "relative" }}
+        >
           <TextField
             type="number"
             value={gradeValue}
             name="gradeNumber"
             label="Enter Grade"
-            onChange={handleGradeChange}
+            onKeyDown={onKeyDownCheck}
+            onChange={handleChangeGradeValue}
           />
           {gradeError && (
-            <p style={{ paddingTop: "10px", color: "red" }}>{gradeError}</p>
+            <p
+              style={{
+                position: "absolute",
+                bottom: "-20px",
+                fontSize: "12px",
+                color: "red",
+              }}
+            >
+              {gradeError}
+            </p>
           )}
         </Box>
         <Button
-          sx={{ width: "100%", maxWidth: "220px" }}
+          sx={{ width: "100%", maxWidth: "240px" }}
           type="submit"
           variant="contained"
           color="primary"

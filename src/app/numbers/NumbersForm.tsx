@@ -3,39 +3,39 @@ import React, { memo, useContext, useState } from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { useNumbersStore } from "@/store/numbers-store";
 import { useSpinnerStore } from "@/store/spinner-store";
+import { onKeyDownCheck } from "@/helpers/utils";
 import { PaginatedPairNumbers } from "./page";
+import { useNumericInput } from "@/hooks/useNumericInput";
 
 export const NumbersForm = memo(() => {
-  const [numberValue, setNumberValue] = useState<string>("");
   const { fetchPairs } = useNumbersStore();
   const { setSpinnerState } = useSpinnerStore();
   const { pairPage, rowsPerPage } = useContext(PaginatedPairNumbers);
   const [numberSuccess, setNumberSuccess] = useState<string>("");
-  const [numberError, setNumberError] = useState<string | null>(null);
-
-  const handleSetNumberValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNumberError("");
-    setNumberValue(e.target.value as string);
-  };
+  const {
+    value: numberValue,
+    setValue: setNumberValue,
+    error: numberError,
+    setError: setNumberError,
+    handleChange: handleChangeNumberValue,
+  } = useNumericInput();
 
   const handleNumberSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const parsed = parseFloat(numberValue);
+    // const parsed = parseFloat(numberValue);
 
-    if (!Number.isInteger(parsed) || parsed === 0) {
-      setNumberError("Only whole numbers allowed");
-      return;
-    }
+    // if (!Number.isInteger(parsed)) {
+    //   setNumberError("Only whole numbers allowed");
+    //   return;
+    // }
+
     setSpinnerState(true);
     setNumberError("");
 
     try {
       const response = await fetch("/api/numbers", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ numberValue }),
       });
 
@@ -61,18 +61,20 @@ export const NumbersForm = memo(() => {
       <Box
         component="form"
         onSubmit={handleNumberSubmit}
-        sx={{ display: "flex", gap: 2, mb: 1 }}
+        sx={{ display: "flex", gap: 2, mb: 1, position: "relative" }}
       >
         <TextField
-          sx={{ width: "100%", maxWidth: "220px" }}
+          sx={{ width: "100%", maxWidth: "240px", position: "relative" }}
           type="number"
           value={numberValue}
           label="Enter number"
-          onChange={handleSetNumberValue}
+          // onKeyDown={(e) =>
+          //   ["e", "E", "+", ",", "."].includes(e.key) && e.preventDefault()
+          // }
+          onChange={handleChangeNumberValue}
         />
-
         <Button
-          sx={{ width: "100%", maxWidth: "220px" }}
+          sx={{ width: "100%", maxWidth: "240px" }}
           type="submit"
           variant="contained"
           color="primary"
@@ -89,10 +91,19 @@ export const NumbersForm = memo(() => {
         >
           ✓ {numberSuccess}
         </span>
+        {numberError && (
+          <p
+            style={{
+              position: "absolute",
+              bottom: "-20px",
+              fontSize: "12px",
+              color: "red",
+            }}
+          >
+            {numberError}
+          </p>
+        )}
       </Box>
-      {numberError && (
-        <p style={{ position: "absolute", color: "red" }}>{numberError}</p>
-      )}
     </div>
   );
 });

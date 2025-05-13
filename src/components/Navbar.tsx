@@ -13,7 +13,7 @@ export const Navbar = memo(() => {
             href="/"
             sx={{ flexGrow: 1 }}
           >
-            Full Stack Homework
+            Generator
           </Typography>
           <Button color="inherit" component={Link} href="/numbers">
             Numbers

@@ -23,7 +23,12 @@ export const POST = async (req: Request) => {
     numberValue = parseFloat(numberValue); // insdeaf of Number(""), it treats "" as 0
     // }
 
-    if (!Number.isInteger(numberValue) || numberValue === 0) {
+    if (
+      !Number.isInteger(numberValue) ||
+      numberValue === 0 ||
+      numberValue < Number.MIN_SAFE_INTEGER ||
+      numberValue > Number.MAX_SAFE_INTEGER
+    ) {
       return NextResponse.json(
         { message: "Number validation failed!" },
         { status: 400 }
@@ -37,6 +42,7 @@ export const POST = async (req: Request) => {
       { status: 201 }
     );
   } catch (error: any) {
+    console.error("POST error: ", error);
     return NextResponse.json(
       { message: msg.FAILD_TO_LOAD_DATA },
       { status: 500 }
@@ -65,6 +71,7 @@ export const GET = async (req: Request) => {
       }
     );
   } catch (error: any) {
+    console.error("GET error: ", error);
     return NextResponse.json(
       { message: msg.FAILD_TO_LOAD_DATA },
       { status: 500 }
