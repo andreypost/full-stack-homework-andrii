@@ -24,8 +24,9 @@ export const POST = async (req: Request) => {
     // }
 
     if (
-      !Number.isInteger(numberValue) ||
       numberValue === 0 ||
+      Number.isNaN(numberValue) ||
+      !Number.isInteger(numberValue) ||
       numberValue < Number.MIN_SAFE_INTEGER ||
       numberValue > Number.MAX_SAFE_INTEGER
     ) {

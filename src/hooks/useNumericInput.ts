@@ -3,8 +3,8 @@ import React, { useState } from "react";
 type Options = {
   min?: number;
   max?: number;
-  allowEmpty?: boolean;
   integerOnly?: boolean;
+  negativeAllowed?: boolean;
   rejectZero?: boolean;
   rejectLeadingZeros?: boolean;
 };
@@ -13,8 +13,8 @@ export const useNumericInput = (options: Options = {}) => {
   const {
     min = Number.MIN_SAFE_INTEGER,
     max = Number.MAX_SAFE_INTEGER,
-    allowEmpty = true,
     integerOnly = true,
+    negativeAllowed = false,
     rejectZero = true,
     rejectLeadingZeros = true,
   } = options;
@@ -27,37 +27,48 @@ export const useNumericInput = (options: Options = {}) => {
 
     const { value } = e.target;
 
-    if (allowEmpty && value === "") {
+    // Allow empty value
+    if (value === "") {
       setValue("");
       return;
     }
 
-    if (rejectZero && value === "0") {
-      setError("Zero is not allowed.");
+    // if (rejectZero && value === "0") {
+    //   setError("Zero is not allowed.");
+    //   return;
+    // }
+
+    if (negativeAllowed && rejectZero && !/^-$|^[-]?[1-9]\d*$/.test(value)) {
+      setError(
+        "Invalid format: only whole both positive and negative numbers allowed, no symbols."
+      );
       return;
     }
 
-    if (rejectLeadingZeros && /^0\d+/.test(value)) {
-      setError("Leading zeros are not allowed.");
-      return;
-    }
+    // if (rejectLeadingZeros && /^-?0\d+/.test(value)) {
+    //   setError("Leading zeros both positive and negative are not allowed.");
+    //   return;
+    // }
 
-    const parsed = Number(value);
+    // const parsedNumber = parseFloat(value);
 
-    if (Number.isNaN(parsed)) {
-      setError("Not a valid number.");
-      return;
-    }
+    // console.log("parsedNumber: ", parsedNumber);
+    // console.log("Number.isNaN(parsedNumber): ", Number.isNaN(parsedNumber));
 
-    if (integerOnly && !Number.isInteger(parsed)) {
-      setError("Only whole numbers are allowed.");
-      return;
-    }
+    // if (Number.isNaN(parsedNumber)) {
+    //   setError("Not a valid number.");
+    //   return;
+    // }
 
-    if (parsed < min || parsed > max) {
-      setError(`Number must be between ${min} and ${max}.`);
-      return;
-    }
+    // if (integerOnly && !Number.isInteger(parsedNumber)) {
+    //   setError("Only whole numbers are allowed.");
+    //   return;
+    // }
+
+    // if (parsedNumber < min || parsedNumber > max) {
+    //   setError(`Number must be between ${min} and ${max}.`);
+    //   return;
+    // }
 
     setValue(value);
   };

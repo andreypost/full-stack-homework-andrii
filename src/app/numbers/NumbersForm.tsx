@@ -23,13 +23,6 @@ export const NumbersForm = memo(() => {
   const handleNumberSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // const parsed = parseFloat(numberValue);
-
-    // if (!Number.isInteger(parsed)) {
-    //   setNumberError("Only whole numbers allowed");
-    //   return;
-    // }
-
     setSpinnerState(true);
     setNumberError("");
 
@@ -65,7 +58,7 @@ export const NumbersForm = memo(() => {
       >
         <TextField
           sx={{ width: "100%", maxWidth: "240px", position: "relative" }}
-          type="number"
+          type="text"
           value={numberValue}
           label="Enter number"
           // onKeyDown={(e) =>
