@@ -32,7 +32,7 @@ export const POST = async (req: Request) => {
     await pool.query("INSERT INTO numbers (value) VALUES ($1);", [numberValue]);
 
     return NextResponse.json(
-      { message: "Number Pair saved successfully!" },
+      { message: `Number: ${numberValue} saved successfully!` },
       { status: 201 }
     );
   } catch (error: any) {

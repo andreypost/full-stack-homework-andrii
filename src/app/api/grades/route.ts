@@ -33,11 +33,9 @@ export const POST = async (req: Request) => {
       gradeValue,
     ]);
 
-    // console.log("dbRes: ", dbRes);
-
     return NextResponse.json(
       {
-        message: "Class Name and Grade Number saved successfully!",
+        message: `Class Name: ${classValue} and Grade Number: ${gradeValue} saved successfully!`,
       },
       { status: 200 }
     );
