@@ -5,6 +5,7 @@ import {
   getPaginatedNumberPairs,
   getTotalNumberPairCount,
 } from "@/lib/numbers.sql";
+import { numberVavidationCheck } from "@/helpers/utils";
 import { msg } from "@/constants/messages";
 
 await initNumbersTable();
@@ -18,18 +19,10 @@ export const POST = async (req: Request) => {
     }
 
     let { numberValue } = body;
-    // for (let i = 0; i < 100_000_000; i++) {
-    // simulate hard calc
-    numberValue = parseFloat(numberValue); // insdeaf of Number(""), it treats "" as 0
-    // }
 
-    if (
-      numberValue === 0 ||
-      Number.isNaN(numberValue) ||
-      !Number.isInteger(numberValue) ||
-      numberValue < Number.MIN_SAFE_INTEGER ||
-      numberValue > Number.MAX_SAFE_INTEGER
-    ) {
+    numberValue = numberVavidationCheck(numberValue);
+
+    if (numberValue === null || numberValue === 0) {
       return NextResponse.json(
         { message: "Number validation failed!" },
         { status: 400 }
@@ -39,7 +32,7 @@ export const POST = async (req: Request) => {
     await pool.query("INSERT INTO numbers (value) VALUES ($1);", [numberValue]);
 
     return NextResponse.json(
-      { message: "Number saved successfully!" },
+      { message: "Number Pair saved successfully!" },
       { status: 201 }
     );
   } catch (error: any) {

@@ -12,23 +12,21 @@ import {
 } from "@mui/material";
 import { useSpinnerStore } from "@/store/spinner-store";
 import { useNumericInput } from "@/hooks/useNumericInput";
-import { onKeyDownCheck } from "@/helpers/utils";
 
 export const GradesForm = memo(() => {
   const [classValue, setClassValue] = useState<string>("");
-  const [classError, setClassError] = useState<string>("");
-  const { setSpinnerState } = useSpinnerStore();
-  const [classGradeSuccess, setClassGradeSuccess] = useState("");
   const {
     value: gradeValue,
     setValue: setGradeValue,
-    error: gradeError,
-    setError: setGradeError,
+    error: classGradeError,
+    setError: setClassGradeError,
     handleChange: handleChangeGradeValue,
-  } = useNumericInput({ min: 0, max: 100, rejectZero: false });
+  } = useNumericInput({ min: 0, max: 100 });
+  const [classGradeSuccess, setClassGradeSuccess] = useState("");
+  const { setSpinnerState } = useSpinnerStore();
 
   const handleClassChange = (e: SelectChangeEvent) => {
-    setClassError("");
+    setClassGradeError("");
     setClassValue(e.target.value);
   };
 
@@ -36,10 +34,10 @@ export const GradesForm = memo(() => {
     e.preventDefault();
 
     if (!classValue) {
-      setClassError("Class name is required!");
+      setClassGradeError("Class name is required!");
       return;
     } else if (!gradeValue) {
-      setGradeError("Grade number is required!");
+      setClassGradeError("Grade number is required!");
       return;
     }
 
@@ -48,7 +46,7 @@ export const GradesForm = memo(() => {
     try {
       const response = await fetch("/api/grades", {
         method: "POST",
-        body: JSON.stringify({ class: classValue, grade: gradeValue }),
+        body: JSON.stringify({ classValue, gradeValue }),
       });
 
       const data = await response.json();
@@ -59,99 +57,81 @@ export const GradesForm = memo(() => {
       setClassGradeSuccess(data.message);
       setClassValue("");
       setGradeValue("");
-      setTimeout(() => setClassGradeSuccess(""), 2000);
+      setTimeout(() => setClassGradeSuccess(""), 3000);
     } catch (error: any) {
       console.error(error);
-      setClassError(error.message);
+      setClassGradeError(error.message);
+      setTimeout(() => setClassGradeError(""), 3000);
     } finally {
       setSpinnerState(false);
     }
   };
 
   return (
-    <div style={{ paddingBottom: "30px" }}>
-      <Box
-        component="form"
-        onSubmit={handleGradeSubmit}
-        sx={{
-          display: "flex",
-          gap: 2,
-          mb: 1,
+    <Box
+      component="form"
+      onSubmit={handleGradeSubmit}
+      sx={{
+        display: "flex",
+        gap: 2,
+        mb: 4,
+        position: "relative",
+      }}
+    >
+      <FormControl sx={{ width: "100%", maxWidth: "240px" }}>
+        <InputLabel id="class-label">Class name:</InputLabel>
+        <Select
+          labelId="class-label"
+          id="class-select"
+          value={classValue}
+          label="Class Name"
+          autoComplete="off"
+          onChange={handleClassChange}
+        >
+          <MenuItem value="Math">Math</MenuItem>
+          <MenuItem value="Science">Science</MenuItem>
+          <MenuItem value="History">History</MenuItem>
+        </Select>
+      </FormControl>
+      <TextField
+        sx={{ width: "100%", maxWidth: "240px" }}
+        type="text"
+        value={gradeValue}
+        label="Enter Grade:"
+        autoComplete="off"
+        onChange={handleChangeGradeValue}
+      />
+      <Button
+        sx={{ width: "100%", maxWidth: "240px" }}
+        type="submit"
+        variant="contained"
+        color="primary"
+      >
+        SUBMIT
+      </Button>
+      <span
+        style={{
+          margin: "auto 0",
+          opacity: classGradeSuccess ? "1" : "0",
+          color: "green",
+          transition: "opacity 1s",
         }}
       >
-        <FormControl
-          sx={{ width: "100%", maxWidth: "240px", position: "relative" }}
-        >
-          <InputLabel id="class-label">Class name:</InputLabel>
-          <Select
-            labelId="class-label"
-            id="class-select"
-            value={classValue}
-            label="Class Name"
-            name="classSelect"
-            onChange={handleClassChange}
-          >
-            <MenuItem value="Math">Math</MenuItem>
-            <MenuItem value="Science">Science</MenuItem>
-            <MenuItem value="History">History</MenuItem>
-          </Select>
-          {classError && (
-            <p
-              style={{
-                position: "absolute",
-                bottom: "-20px",
-                fontSize: "12px",
-                color: "red",
-              }}
-            >
-              {classError}
-            </p>
-          )}
-        </FormControl>
-        <Box
-          component="div"
-          sx={{ width: "100%", maxWidth: "240px", position: "relative" }}
-        >
-          <TextField
-            type="number"
-            value={gradeValue}
-            name="gradeNumber"
-            label="Enter Grade"
-            onKeyDown={onKeyDownCheck}
-            onChange={handleChangeGradeValue}
-          />
-          {gradeError && (
-            <p
-              style={{
-                position: "absolute",
-                bottom: "-20px",
-                fontSize: "12px",
-                color: "red",
-              }}
-            >
-              {gradeError}
-            </p>
-          )}
-        </Box>
-        <Button
-          sx={{ width: "100%", maxWidth: "240px" }}
-          type="submit"
-          variant="contained"
-          color="primary"
-        >
-          SUBMIT
-        </Button>
-        <span
-          style={{
-            margin: "auto 0",
-            opacity: classGradeSuccess ? "1" : "0",
-            color: "green",
-            transition: "opacity 1s",
-          }}
-        >
-          ✓ {classGradeSuccess}
-        </span>
-      </Box>
-    </div>
+        ✓ {classGradeSuccess}
+      </span>
+      <p
+        style={{
+          position: "absolute",
+          left: classValue ? "256px" : "0",
+          bottom: "-20px",
+          fontSize: "12px",
+          color: "red",
+          opacity: classGradeError ? "1" : "0",
+          transition: "opacity 1s",
+        }}
+      >
+        {classGradeError}
+      </p>
+    </Box>
   );
 });
