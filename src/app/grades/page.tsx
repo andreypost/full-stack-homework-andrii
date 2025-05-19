@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Container, Typography } from "@mui/material";
 import { GradesForm } from "./GradesForm";
+import { GradesTable } from "./GradesTable";
 
 const Grades = memo(() => {
   return (
@@ -9,6 +10,7 @@ const Grades = memo(() => {
         Grades Page
       </Typography>
       <GradesForm />
+      <GradesTable />
     </Container>
   );
 });

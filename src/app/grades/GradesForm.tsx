@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useSpinnerStore } from "@/store/spinner-store";
 import { useNumericInput } from "@/hooks/useNumericInput";
+import { useGradeNumberStore } from "@/store/grade-number-store";
 
 export const GradesForm = memo(() => {
   const [classValue, setClassValue] = useState<string>("");
@@ -22,6 +23,7 @@ export const GradesForm = memo(() => {
     setError: setClassGradeError,
     handleChange: handleChangeGradeValue,
   } = useNumericInput({ min: 0, max: 100 });
+  const { submitGradeNumberAndRefresh } = useGradeNumberStore();
   const [classGradeSuccess, setClassGradeSuccess] = useState("");
   const { setSpinnerState } = useSpinnerStore();
 
@@ -45,17 +47,9 @@ export const GradesForm = memo(() => {
     setClassGradeError("");
 
     try {
-      const response = await fetch("/api/grades", {
-        method: "POST",
-        body: JSON.stringify({ classValue, gradeValue }),
-      });
+      const message = await submitGradeNumberAndRefresh(classValue, gradeValue);
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-
-      console.log("data: ", data);
-
-      setClassGradeSuccess(data.message);
+      setClassGradeSuccess(message);
       setClassValue("");
       setGradeValue("");
       setTimeout(() => setClassGradeSuccess(""), 3000);

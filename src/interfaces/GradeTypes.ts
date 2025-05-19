@@ -1,5 +1,5 @@
-export interface GradeNumber {
+export type AdjacentGradeNumber = {
   id: number;
   class: string;
   grade: number;
-}
+};

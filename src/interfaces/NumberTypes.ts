@@ -1,6 +1,6 @@
 import React from "react";
 
-export type AdjacentPair = {
+export type AdjacentNumberPair = {
   id1: number;
   number1: number;
   id2: number;

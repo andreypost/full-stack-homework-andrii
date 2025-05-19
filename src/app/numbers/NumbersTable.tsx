@@ -18,7 +18,7 @@ import { PaginatedPairNumbers } from "./page";
 export const NumbersTable = memo(() => {
   const { pairPage, setPairPage, rowsPerPage, setRowsPerPage } =
     useContext(PaginatedPairNumbers);
-  const { pairs, totalCount, fetchNumberPairs } = useNumberPairStore();
+  const { numberPairs, totalCount, fetchNumberPairs } = useNumberPairStore();
   const [isLoading, setSpinnerState] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -87,8 +87,8 @@ export const NumbersTable = memo(() => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {pairs?.length > 0 &&
-            pairs.map(({ id1, number1, id2, number2, sum }) => (
+          {numberPairs?.length > 0 &&
+            numberPairs.map(({ id1, number1, id2, number2, sum }) => (
               <TableRow key={id1}>
                 <TableCell>{id1}</TableCell>
                 <TableCell>{number1}</TableCell>

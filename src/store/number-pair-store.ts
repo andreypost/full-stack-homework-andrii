@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import { AdjacentPair } from "@/interfaces/NumberTypes";
+import { AdjacentNumberPair } from "@/interfaces/NumberTypes";
 
 export type NumberPairStore = {
-  pairs: AdjacentPair[];
+  numberPairs: AdjacentNumberPair[];
   totalCount: number;
   addNewNumberPair: (numberValue: string) => Promise<string>;
   fetchNumberPairs: (
@@ -17,7 +17,7 @@ export type NumberPairStore = {
 };
 
 export const useNumberPairStore = create<NumberPairStore>((set, get) => ({
-  pairs: [],
+  numberPairs: [],
   totalCount: 0,
   addNewNumberPair: async (numberValue): Promise<string> => {
     const response = await fetch("/api/numbers", {
@@ -39,13 +39,13 @@ export const useNumberPairStore = create<NumberPairStore>((set, get) => ({
         page: currentPairPage.toString(),
         rowsPerPage: currentRowsPerPage.toString(),
       });
-      const response = await fetch(`/api/numbers?${params}`);
+      const response = await fetch(`/api/numbers?${params}`, { method: "GET" });
       if (!response.ok) throw new Error(`Server error ${response.status}`);
 
       const { data = [], totalCount = 0 } = await response.json();
 
-      set({ pairs: data, totalCount });
-    } catch (error) {
+      set({ numberPairs: data, totalCount });
+    } catch (error: any) {
       console.error("Failed to fetch adjacent pairs", error);
     }
   },
@@ -56,6 +56,7 @@ export const useNumberPairStore = create<NumberPairStore>((set, get) => ({
   ): Promise<string> => {
     const message = await get().addNewNumberPair(numberValue);
     await get().fetchNumberPairs(pairPage, rowsPerPage);
+
     return message;
   },
 }));
