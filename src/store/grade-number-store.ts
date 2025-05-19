@@ -3,6 +3,7 @@ import { AdjacentGradeNumber } from "@/interfaces/GradeTypes";
 
 export type GradeNumberStore = {
   gradeNumbers: AdjacentGradeNumber[];
+  changeGradeNumbersDate: (newData: []) => void;
   addNewGradeNumber: (
     classValue: string,
     gradeValue: string
@@ -16,6 +17,9 @@ export type GradeNumberStore = {
 
 export const useGradeNumberStore = create<GradeNumberStore>((set, get) => ({
   gradeNumbers: [],
+  changeGradeNumbersDate: (newData) => {
+    set({ gradeNumbers: newData });
+  },
   addNewGradeNumber: async (
     classValue: string,
     gradeValue: string
