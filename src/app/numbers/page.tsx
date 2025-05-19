@@ -3,7 +3,7 @@ import { createContext, memo, useState } from "react";
 import { Container, Typography } from "@mui/material";
 import { NumbersForm } from "./NumbersForm";
 import { NumbersTable } from "./NumbersTable";
-import { PaginatedPairPage } from "@/interfaces/NumbersTypes";
+import { PaginatedPairPage } from "@/interfaces/NumberTypes";
 
 export const PaginatedPairNumbers = createContext({} as PaginatedPairPage);
 

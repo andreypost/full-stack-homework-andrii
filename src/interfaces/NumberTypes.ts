@@ -1,10 +1,5 @@
 import React from "react";
 
-export type NumbersPair = {
-  id: number;
-  value: number;
-};
-
 export type AdjacentPair = {
   id1: number;
   number1: number;

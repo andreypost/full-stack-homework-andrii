@@ -42,6 +42,7 @@ export const GradesForm = memo(() => {
     }
 
     setSpinnerState(true);
+    setClassGradeError("");
 
     try {
       const response = await fetch("/api/grades", {

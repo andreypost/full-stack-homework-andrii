@@ -12,13 +12,13 @@ import {
   TableRow,
 } from "@mui/material";
 import { SpinnerOverlay } from "@/components/SpinnerOverlay";
-import { useNumbersStore } from "@/store/numbers-store";
+import { useNumberPairStore } from "@/store/number-pair-store";
 import { PaginatedPairNumbers } from "./page";
 
 export const NumbersTable = memo(() => {
   const { pairPage, setPairPage, rowsPerPage, setRowsPerPage } =
     useContext(PaginatedPairNumbers);
-  const { pairs, totalCount, fetchPairs } = useNumbersStore();
+  const { pairs, totalCount, fetchNumberPairs } = useNumberPairStore();
   const [isLoading, setSpinnerState] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,14 +29,14 @@ export const NumbersTable = memo(() => {
 
     setPairPage(pageFromQuery);
     setRowsPerPage(rowsFromQuery);
-    const getPairs = async () => {
+    const getNumberPairs = async () => {
       // requestAnimationFrame(async () => {
       // await new Promise((res) => setTimeout((r) => res(r), 0));
-      await fetchPairs(pageFromQuery, rowsFromQuery);
+      await fetchNumberPairs(pageFromQuery, rowsFromQuery);
       setSpinnerState(false);
       // });
     };
-    getPairs();
+    getNumberPairs();
   }, []);
 
   const handleChangePage = async (_: any, newPage: number) => {
@@ -44,7 +44,7 @@ export const NumbersTable = memo(() => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set("page", newPage.toString());
     router.push(`/numbers?${newParams}`);
-    await fetchPairs(newPage, rowsPerPage);
+    await fetchNumberPairs(newPage, rowsPerPage);
     setPairPage(newPage);
     setSpinnerState(false);
   };
@@ -58,7 +58,7 @@ export const NumbersTable = memo(() => {
     newParams.set("page", "0");
     newParams.set("rowsPerPage", newRows.toString());
     router.push(`/numbers?${newParams}`);
-    await fetchPairs(0, newRows);
+    await fetchNumberPairs(0, newRows);
     setPairPage(0);
     setRowsPerPage(newRows);
     setSpinnerState(false);
