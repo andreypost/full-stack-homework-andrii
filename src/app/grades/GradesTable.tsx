@@ -11,44 +11,50 @@ import {
   TableRow,
 } from "@mui/material";
 import { Spinner } from "@/components/SpinnerOverlay";
+import { AdjacentGradeNumber } from "@/interfaces/GradeTypes";
 
 export const GradesTable = memo(() => {
-  const { gradeNumbers, fetchGradeNumbers, changeGradeNumbersDate } =
-    useGradeNumberStore();
-  const [isLoading, setSpinnerState] = useState(true);
+  const { gradeNumbers, fetchGradeNumbers } = useGradeNumberStore();
+  const [filteredGrades, setFilteredGrades] = useState<AdjacentGradeNumber[]>(
+    []
+  );
+  const [buttonState, setButtonState] = useState<string>("allGrade");
+  const [isLoading, setSpinnerState] = useState<boolean>(true);
 
   useEffect(() => {
-    const getGradeData = async () => {
-      await fetchGradeNumbers();
-    };
+    const getGradeData = async () => await fetchGradeNumbers();
     getGradeData();
-    setSpinnerState(false);
   }, []);
 
-  const showAllGradeData = (): void => {};
+  useEffect(() => {
+    setFilteredGrades(gradeNumbers);
+    setButtonState("allGrade");
+    setSpinnerState(false);
+  }, [gradeNumbers]);
 
-  const classAveragesData = (): void => {
-    let classAverages = [] as any;
-    let gradeSum = gradeNumbers.reduce((acc, { class: cls, grade }) => {
+  const classAveragesCalc = (): void => {
+    if (!gradeNumbers?.length) return;
+
+    let gradeByClass = gradeNumbers.reduce((acc, { class: cls, grade }) => {
       !acc[cls] ? (acc[cls] = [+grade]) : acc[cls].push(+grade);
       return acc;
-    }, {} as Record<string, Array<number>>);
-    let index = 0;
-    for (let grade in gradeSum) {
-      classAverages.push({
-        id: ++index,
-        class: grade,
-        grade:
-          gradeSum[grade].reduce((acc, sum) => acc + sum) /
-          gradeSum[grade].length,
-      });
-      // classAverages[grade] =
-      //   gradeSum[grade].reduce((acc, sum) => acc + sum) /
-      //   gradeSum[grade].length;
-    }
-    console.log("gradeNumbers: ", gradeNumbers);
-    console.log("classAverages: ", classAverages);
-    changeGradeNumbersDate(classAverages);
+    }, {} as Record<string, number[]>);
+
+    let averagesResult = Object.entries(gradeByClass).map(
+      ([cls, grade], x) => ({
+        id: x,
+        class: cls,
+        grade: +(grade.reduce((c, s) => c + s) / grade.length).toFixed(2),
+      })
+    );
+
+    setFilteredGrades(averagesResult);
+    setButtonState("averagesGrade");
+  };
+
+  const gradeFiltering = (min: number, butState: string) => {
+    setFilteredGrades(gradeNumbers.filter(({ grade }) => grade > min));
+    setButtonState(butState);
   };
 
   // "Class Averages" - Calculates and displays average grade per class
@@ -60,14 +66,33 @@ export const GradesTable = memo(() => {
   return (
     <Box>
       <Box display={"flex"} gap={1} mb={2}>
-        <Button variant="contained" onClick={showAllGradeData}>
+        <Button
+          variant={buttonState === "allGrade" ? "contained" : "outlined"}
+          onClick={() => {
+            setFilteredGrades(gradeNumbers);
+            setButtonState("allGrade");
+          }}
+        >
           Show All Data
         </Button>
-        <Button variant="outlined" onClick={classAveragesData}>
+        <Button
+          variant={buttonState === "averagesGrade" ? "contained" : "outlined"}
+          onClick={classAveragesCalc}
+        >
           Class Averages
         </Button>
-        <Button variant="outlined">Passing Average</Button>
-        <Button variant="outlined">High Performing Classes</Button>
+        <Button
+          variant={buttonState === "passingGrade" ? "contained" : "outlined"}
+          onClick={() => gradeFiltering(55, "passingGrade")}
+        >
+          Passing Average
+        </Button>
+        <Button
+          variant={buttonState === "highGrade" ? "contained" : "outlined"}
+          onClick={() => gradeFiltering(70, "highGrade")}
+        >
+          High Performing Classes
+        </Button>
       </Box>
 
       <Table>
@@ -82,8 +107,8 @@ export const GradesTable = memo(() => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {gradeNumbers?.length > 0 &&
-            gradeNumbers.map(({ id, class: cls, grade }) => (
+          {filteredGrades?.length > 0 &&
+            filteredGrades.map(({ id, class: cls, grade }) => (
               <TableRow key={id}>
                 <TableCell>{cls}</TableCell>
                 <TableCell>{grade}</TableCell>
