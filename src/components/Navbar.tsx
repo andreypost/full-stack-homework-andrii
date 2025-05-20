@@ -15,10 +15,10 @@ export const Navbar = memo(() => {
           >
             Generator
           </Typography>
-          <Button color="inherit" component={Link} href="/numbers">
+          <Button color="inherit" component={Link} href="/pages/numbers">
             Numbers
           </Button>
-          <Button color="inherit" component={Link} href="/grades">
+          <Button color="inherit" component={Link} href="/pages/grades">
             Grades
           </Button>
         </Toolbar>
