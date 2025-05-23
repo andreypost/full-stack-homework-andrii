@@ -20,6 +20,7 @@ export const GradesTable = memo(() => {
   );
   const [buttonState, setButtonState] = useState<string>("allGrade");
   const [isLoading, setSpinnerState] = useState<boolean>(true);
+  const [mathId] = useState(Math.floor(Math.random() * 1000));
 
   useEffect(() => {
     const getGradeData = async () => await fetchGradeNumbers();
@@ -32,34 +33,25 @@ export const GradesTable = memo(() => {
     setSpinnerState(false);
   }, [gradeNumbers]);
 
-  const classAveragesCalc = (): void => {
+  const classAveragesCalc = (min: number = 0): void => {
     if (!gradeNumbers?.length) return;
 
     let gradeByClass = gradeNumbers.reduce((acc, { class: cls, grade }) => {
+      if (grade < min) return acc;
       !acc[cls] ? (acc[cls] = [+grade]) : acc[cls].push(+grade);
       return acc;
     }, {} as Record<string, number[]>);
 
     let averagesResult = Object.entries(gradeByClass).map(
-      ([cls, grade], x) => ({
-        id: x,
+      ([cls, grades], x) => ({
+        id: mathId + x,
         class: cls,
-        grade: +(grade.reduce((c, s) => c + s) / grade.length).toFixed(2),
+        grade: +(grades.reduce((a, s) => a + s, 0) / grades.length).toFixed(2),
       })
     );
 
     setFilteredGrades(averagesResult);
-    setButtonState("averagesGrade");
   };
-
-  const gradeFiltering = (min: number, butState: string) => {
-    setFilteredGrades(gradeNumbers.filter(({ grade }) => grade > min));
-    setButtonState(butState);
-  };
-
-  // "Class Averages" - Calculates and displays average grade per class
-  // "Passing Average" - Shows class averages for grades > 55
-  // "High Performing Classes" - Lists classes with averages > 70
 
   if (isLoading) return <Spinner />;
 
@@ -77,24 +69,32 @@ export const GradesTable = memo(() => {
         </Button>
         <Button
           variant={buttonState === "averagesGrade" ? "contained" : "outlined"}
-          onClick={classAveragesCalc}
+          onClick={() => {
+            classAveragesCalc();
+            setButtonState("averagesGrade");
+          }}
         >
           Class Averages
         </Button>
         <Button
           variant={buttonState === "passingGrade" ? "contained" : "outlined"}
-          onClick={() => gradeFiltering(55, "passingGrade")}
+          onClick={() => {
+            classAveragesCalc(55);
+            setButtonState("passingGrade");
+          }}
         >
           Passing Average
         </Button>
         <Button
           variant={buttonState === "highGrade" ? "contained" : "outlined"}
-          onClick={() => gradeFiltering(70, "highGrade")}
+          onClick={() => {
+            classAveragesCalc(70);
+            setButtonState("highGrade");
+          }}
         >
           High Performing Classes
         </Button>
       </Box>
-
       <Table>
         <TableHead>
           <TableRow>
